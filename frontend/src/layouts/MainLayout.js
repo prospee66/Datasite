@@ -199,8 +199,8 @@ const MainLayout = () => {
 
       {/* Mobile Bottom Navigation */}
       {user && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-bottom">
-          <div className="flex justify-around items-center h-16">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 z-50 safe-area-bottom">
+          <div className="flex justify-around items-center h-16 max-w-lg mx-auto">
             {navLinks.slice(0, 4).map((link) => (
               <Link
                 key={link.name}
