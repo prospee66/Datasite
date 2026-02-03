@@ -1,0 +1,30 @@
+{
+  "name": "optimistic-empire",
+  "version": "1.0.0",
+  "description": "OPTIMISTIC EMPIRE - Data Reselling Platform for Ghana",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "data-reselling",
+    "ghana",
+    "mtn",
+    "telecel",
+    "airteltigo",
+    "paystack"
+  ],
+  "author": "OPTIMISTIC EMPIRE",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^7.0.0"
+  }
+}
