@@ -458,7 +458,8 @@ select {
 /* Landscape mobile handling */
 @media (max-height: 500px) and (orientation: landscape) {
   .hero-section {
-    min-height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
     @apply py-8;
   }
 }
@@ -474,9 +475,8 @@ select {
   }
 }
 
-/* Smooth momentum scrolling for iOS */
+/* Smooth scrolling */
 .scroll-smooth {
-  -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 }
 
