@@ -5,7 +5,6 @@ import {
   ShieldCheckIcon,
   CurrencyDollarIcon,
   DevicePhoneMobileIcon,
-  CheckCircleIcon,
   SparklesIcon,
   ArrowRightIcon,
 } from '@heroicons/react/24/outline';
@@ -39,9 +38,9 @@ const features = [
 ];
 
 const networks = [
-  { name: 'MTN', color: 'from-yellow-400 to-yellow-500', textColor: 'text-gray-900', plans: ['1GB - GHS 5', '5GB - GHS 18', '20GB - GHS 50'] },
-  { name: 'Telecel', color: 'from-red-500 to-red-600', textColor: 'text-white', plans: ['1GB - GHS 5', '5GB - GHS 15', '15GB - GHS 45'] },
-  { name: 'AirtelTigo', color: 'from-red-500 via-purple-500 to-blue-500', textColor: 'text-white', plans: ['1.5GB - GHS 5', '4GB - GHS 14', '12GB - GHS 35'] },
+  { name: 'MTN', color: 'from-yellow-400 to-yellow-500', textColor: 'text-gray-900', description: 'Ghana\'s largest network with nationwide coverage' },
+  { name: 'Telecel', color: 'from-red-500 to-red-600', textColor: 'text-white', description: 'Fast and reliable data bundles' },
+  { name: 'AirtelTigo', color: 'from-red-500 via-purple-500 to-blue-500', textColor: 'text-white', description: 'Affordable data plans for everyone' },
 ];
 
 const Home = () => {
@@ -143,31 +142,22 @@ const Home = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {networks.map((network, index) => (
-              <div
+              <Link
                 key={network.name}
-                className="group card card-hover p-6 sm:p-8 animate-slide-up"
+                to="/buy-data"
+                className="group card card-hover p-6 sm:p-8 animate-slide-up cursor-pointer"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className={`w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br ${network.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                   <span className={`text-2xl sm:text-3xl font-bold ${network.textColor}`}>{network.name[0]}</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">{network.name}</h3>
-                <ul className="space-y-3 mb-6">
-                  {network.plans.map((plan, idx) => (
-                    <li key={idx} className="flex items-center text-gray-600">
-                      <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
-                      <span className="font-medium">{plan}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to="/buy-data"
-                  className="inline-flex items-center text-primary-600 font-semibold hover:text-primary-700 group/link"
-                >
-                  View all plans
-                  <ArrowRightIcon className="h-4 w-4 ml-2 group-hover/link:translate-x-1 transition-transform" />
-                </Link>
-              </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">{network.name}</h3>
+                <p className="text-gray-600 mb-6">{network.description}</p>
+                <div className="inline-flex items-center text-primary-600 font-semibold group-hover:text-primary-700">
+                  Buy Data
+                  <ArrowRightIcon className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
             ))}
           </div>
         </div>
