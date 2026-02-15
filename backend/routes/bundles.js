@@ -179,37 +179,37 @@ router.post('/seed', protect, authorize('admin'), async (req, res, next) => {
   try {
     const bundlesData = [
       // MTN Bundles (12 packages)
-      { network: 'MTN', name: 'MTN 1GB', dataAmount: '1GB', dataAmountMB: 1024, validity: '30 days', validityDays: 30, costPrice: 4.50, retailPrice: 6.00, category: 'monthly', vtuCode: 'MTN-1GB', isPopular: true, sortOrder: 1 },
-      { network: 'MTN', name: 'MTN 2GB', dataAmount: '2GB', dataAmountMB: 2048, validity: '30 days', validityDays: 30, costPrice: 9.00, retailPrice: 12.00, category: 'monthly', vtuCode: 'MTN-2GB', sortOrder: 2 },
-      { network: 'MTN', name: 'MTN 3GB', dataAmount: '3GB', dataAmountMB: 3072, validity: '30 days', validityDays: 30, costPrice: 13.00, retailPrice: 17.00, category: 'monthly', vtuCode: 'MTN-3GB', sortOrder: 3 },
-      { network: 'MTN', name: 'MTN 4GB', dataAmount: '4GB', dataAmountMB: 4096, validity: '30 days', validityDays: 30, costPrice: 17.00, retailPrice: 22.00, category: 'monthly', vtuCode: 'MTN-4GB', sortOrder: 4 },
-      { network: 'MTN', name: 'MTN 5GB', dataAmount: '5GB', dataAmountMB: 5120, validity: '30 days', validityDays: 30, costPrice: 20.00, retailPrice: 26.00, category: 'monthly', vtuCode: 'MTN-5GB', isPopular: true, sortOrder: 5 },
-      { network: 'MTN', name: 'MTN 8GB', dataAmount: '8GB', dataAmountMB: 8192, validity: '30 days', validityDays: 30, costPrice: 30.00, retailPrice: 38.00, category: 'monthly', vtuCode: 'MTN-8GB', sortOrder: 6 },
-      { network: 'MTN', name: 'MTN 10GB', dataAmount: '10GB', dataAmountMB: 10240, validity: '30 days', validityDays: 30, costPrice: 35.00, retailPrice: 44.00, category: 'monthly', vtuCode: 'MTN-10GB', isPopular: true, sortOrder: 7 },
-      { network: 'MTN', name: 'MTN 15GB', dataAmount: '15GB', dataAmountMB: 15360, validity: '30 days', validityDays: 30, costPrice: 55.00, retailPrice: 70.00, category: 'monthly', vtuCode: 'MTN-15GB', sortOrder: 8 },
-      { network: 'MTN', name: 'MTN 25GB', dataAmount: '25GB', dataAmountMB: 25600, validity: '30 days', validityDays: 30, costPrice: 88.00, retailPrice: 110.00, category: 'monthly', vtuCode: 'MTN-25GB', sortOrder: 9 },
-      { network: 'MTN', name: 'MTN 30GB', dataAmount: '30GB', dataAmountMB: 30720, validity: '30 days', validityDays: 30, costPrice: 110.00, retailPrice: 137.00, category: 'monthly', vtuCode: 'MTN-30GB', sortOrder: 10 },
-      { network: 'MTN', name: 'MTN 40GB', dataAmount: '40GB', dataAmountMB: 40960, validity: '30 days', validityDays: 30, costPrice: 142.00, retailPrice: 178.00, category: 'monthly', vtuCode: 'MTN-40GB', sortOrder: 11 },
-      { network: 'MTN', name: 'MTN 50GB', dataAmount: '50GB', dataAmountMB: 51200, validity: '30 days', validityDays: 30, costPrice: 164.00, retailPrice: 205.00, category: 'monthly', vtuCode: 'MTN-50GB', isPopular: true, sortOrder: 12 },
+      { network: 'MTN', name: 'MTN 1GB', dataAmount: '1GB', dataAmountMB: 1024, validity: 'Non-Expiry', validityDays: 0, costPrice: 4.50, retailPrice: 6.00, category: 'monthly', vtuCode: 'MTN-1GB', isPopular: true, sortOrder: 1 },
+      { network: 'MTN', name: 'MTN 2GB', dataAmount: '2GB', dataAmountMB: 2048, validity: 'Non-Expiry', validityDays: 0, costPrice: 9.00, retailPrice: 12.00, category: 'monthly', vtuCode: 'MTN-2GB', sortOrder: 2 },
+      { network: 'MTN', name: 'MTN 3GB', dataAmount: '3GB', dataAmountMB: 3072, validity: 'Non-Expiry', validityDays: 0, costPrice: 13.00, retailPrice: 17.00, category: 'monthly', vtuCode: 'MTN-3GB', sortOrder: 3 },
+      { network: 'MTN', name: 'MTN 4GB', dataAmount: '4GB', dataAmountMB: 4096, validity: 'Non-Expiry', validityDays: 0, costPrice: 17.00, retailPrice: 22.00, category: 'monthly', vtuCode: 'MTN-4GB', sortOrder: 4 },
+      { network: 'MTN', name: 'MTN 5GB', dataAmount: '5GB', dataAmountMB: 5120, validity: 'Non-Expiry', validityDays: 0, costPrice: 20.00, retailPrice: 26.00, category: 'monthly', vtuCode: 'MTN-5GB', isPopular: true, sortOrder: 5 },
+      { network: 'MTN', name: 'MTN 8GB', dataAmount: '8GB', dataAmountMB: 8192, validity: 'Non-Expiry', validityDays: 0, costPrice: 30.00, retailPrice: 38.00, category: 'monthly', vtuCode: 'MTN-8GB', sortOrder: 6 },
+      { network: 'MTN', name: 'MTN 10GB', dataAmount: '10GB', dataAmountMB: 10240, validity: 'Non-Expiry', validityDays: 0, costPrice: 35.00, retailPrice: 44.00, category: 'monthly', vtuCode: 'MTN-10GB', isPopular: true, sortOrder: 7 },
+      { network: 'MTN', name: 'MTN 15GB', dataAmount: '15GB', dataAmountMB: 15360, validity: 'Non-Expiry', validityDays: 0, costPrice: 55.00, retailPrice: 70.00, category: 'monthly', vtuCode: 'MTN-15GB', sortOrder: 8 },
+      { network: 'MTN', name: 'MTN 25GB', dataAmount: '25GB', dataAmountMB: 25600, validity: 'Non-Expiry', validityDays: 0, costPrice: 88.00, retailPrice: 110.00, category: 'monthly', vtuCode: 'MTN-25GB', sortOrder: 9 },
+      { network: 'MTN', name: 'MTN 30GB', dataAmount: '30GB', dataAmountMB: 30720, validity: 'Non-Expiry', validityDays: 0, costPrice: 110.00, retailPrice: 137.00, category: 'monthly', vtuCode: 'MTN-30GB', sortOrder: 10 },
+      { network: 'MTN', name: 'MTN 40GB', dataAmount: '40GB', dataAmountMB: 40960, validity: 'Non-Expiry', validityDays: 0, costPrice: 142.00, retailPrice: 178.00, category: 'monthly', vtuCode: 'MTN-40GB', sortOrder: 11 },
+      { network: 'MTN', name: 'MTN 50GB', dataAmount: '50GB', dataAmountMB: 51200, validity: 'Non-Expiry', validityDays: 0, costPrice: 164.00, retailPrice: 205.00, category: 'monthly', vtuCode: 'MTN-50GB', isPopular: true, sortOrder: 12 },
 
       // AirtelTigo Bundles (11 packages)
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 1GB', dataAmount: '1GB', dataAmountMB: 1024, validity: '30 days', validityDays: 30, costPrice: 4.50, retailPrice: 6.00, category: 'monthly', vtuCode: 'AT-1GB', isPopular: true, sortOrder: 1 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 2GB', dataAmount: '2GB', dataAmountMB: 2048, validity: '30 days', validityDays: 30, costPrice: 7.50, retailPrice: 10.00, category: 'monthly', vtuCode: 'AT-2GB', sortOrder: 2 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 3GB', dataAmount: '3GB', dataAmountMB: 3072, validity: '30 days', validityDays: 30, costPrice: 11.00, retailPrice: 15.00, category: 'monthly', vtuCode: 'AT-3GB', sortOrder: 3 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 4GB', dataAmount: '4GB', dataAmountMB: 4096, validity: '30 days', validityDays: 30, costPrice: 14.00, retailPrice: 18.00, category: 'monthly', vtuCode: 'AT-4GB', sortOrder: 4 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 5GB', dataAmount: '5GB', dataAmountMB: 5120, validity: '30 days', validityDays: 30, costPrice: 18.00, retailPrice: 23.00, category: 'monthly', vtuCode: 'AT-5GB', isPopular: true, sortOrder: 5 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 8GB', dataAmount: '8GB', dataAmountMB: 8192, validity: '30 days', validityDays: 30, costPrice: 25.00, retailPrice: 32.00, category: 'monthly', vtuCode: 'AT-8GB', sortOrder: 6 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 10GB', dataAmount: '10GB', dataAmountMB: 10240, validity: '30 days', validityDays: 30, costPrice: 33.00, retailPrice: 42.00, category: 'monthly', vtuCode: 'AT-10GB', isPopular: true, sortOrder: 7 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 15GB', dataAmount: '15GB', dataAmountMB: 15360, validity: '30 days', validityDays: 30, costPrice: 52.00, retailPrice: 65.00, category: 'monthly', vtuCode: 'AT-15GB', sortOrder: 8 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 25GB', dataAmount: '25GB', dataAmountMB: 25600, validity: '30 days', validityDays: 30, costPrice: 80.00, retailPrice: 100.00, category: 'monthly', vtuCode: 'AT-25GB', sortOrder: 9 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 30GB', dataAmount: '30GB', dataAmountMB: 30720, validity: '30 days', validityDays: 30, costPrice: 128.00, retailPrice: 160.00, category: 'monthly', vtuCode: 'AT-30GB', sortOrder: 10 },
-      { network: 'AIRTELTIGO', name: 'AirtelTigo 50GB', dataAmount: '50GB', dataAmountMB: 51200, validity: '30 days', validityDays: 30, costPrice: 160.00, retailPrice: 200.00, category: 'monthly', vtuCode: 'AT-50GB', isPopular: true, sortOrder: 11 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 1GB', dataAmount: '1GB', dataAmountMB: 1024, validity: 'Non-Expiry', validityDays: 0, costPrice: 4.50, retailPrice: 6.00, category: 'monthly', vtuCode: 'AT-1GB', isPopular: true, sortOrder: 1 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 2GB', dataAmount: '2GB', dataAmountMB: 2048, validity: 'Non-Expiry', validityDays: 0, costPrice: 7.50, retailPrice: 10.00, category: 'monthly', vtuCode: 'AT-2GB', sortOrder: 2 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 3GB', dataAmount: '3GB', dataAmountMB: 3072, validity: 'Non-Expiry', validityDays: 0, costPrice: 11.00, retailPrice: 15.00, category: 'monthly', vtuCode: 'AT-3GB', sortOrder: 3 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 4GB', dataAmount: '4GB', dataAmountMB: 4096, validity: 'Non-Expiry', validityDays: 0, costPrice: 14.00, retailPrice: 18.00, category: 'monthly', vtuCode: 'AT-4GB', sortOrder: 4 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 5GB', dataAmount: '5GB', dataAmountMB: 5120, validity: 'Non-Expiry', validityDays: 0, costPrice: 18.00, retailPrice: 23.00, category: 'monthly', vtuCode: 'AT-5GB', isPopular: true, sortOrder: 5 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 8GB', dataAmount: '8GB', dataAmountMB: 8192, validity: 'Non-Expiry', validityDays: 0, costPrice: 25.00, retailPrice: 32.00, category: 'monthly', vtuCode: 'AT-8GB', sortOrder: 6 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 10GB', dataAmount: '10GB', dataAmountMB: 10240, validity: 'Non-Expiry', validityDays: 0, costPrice: 33.00, retailPrice: 42.00, category: 'monthly', vtuCode: 'AT-10GB', isPopular: true, sortOrder: 7 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 15GB', dataAmount: '15GB', dataAmountMB: 15360, validity: 'Non-Expiry', validityDays: 0, costPrice: 52.00, retailPrice: 65.00, category: 'monthly', vtuCode: 'AT-15GB', sortOrder: 8 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 25GB', dataAmount: '25GB', dataAmountMB: 25600, validity: 'Non-Expiry', validityDays: 0, costPrice: 80.00, retailPrice: 100.00, category: 'monthly', vtuCode: 'AT-25GB', sortOrder: 9 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 30GB', dataAmount: '30GB', dataAmountMB: 30720, validity: 'Non-Expiry', validityDays: 0, costPrice: 128.00, retailPrice: 160.00, category: 'monthly', vtuCode: 'AT-30GB', sortOrder: 10 },
+      { network: 'AIRTELTIGO', name: 'AirtelTigo 50GB', dataAmount: '50GB', dataAmountMB: 51200, validity: 'Non-Expiry', validityDays: 0, costPrice: 160.00, retailPrice: 200.00, category: 'monthly', vtuCode: 'AT-50GB', isPopular: true, sortOrder: 11 },
 
       // Telecel Bundles (4 packages)
-      { network: 'TELECEL', name: 'Telecel 5GB', dataAmount: '5GB', dataAmountMB: 5120, validity: '30 days', validityDays: 30, costPrice: 22.00, retailPrice: 28.00, category: 'monthly', vtuCode: 'TEL-5GB', isPopular: true, sortOrder: 1 },
-      { network: 'TELECEL', name: 'Telecel 10GB', dataAmount: '10GB', dataAmountMB: 10240, validity: '30 days', validityDays: 30, costPrice: 35.00, retailPrice: 44.00, category: 'monthly', vtuCode: 'TEL-10GB', isPopular: true, sortOrder: 2 },
-      { network: 'TELECEL', name: 'Telecel 20GB', dataAmount: '20GB', dataAmountMB: 20480, validity: '30 days', validityDays: 30, costPrice: 61.00, retailPrice: 76.00, category: 'monthly', vtuCode: 'TEL-20GB', sortOrder: 3 },
-      { network: 'TELECEL', name: 'Telecel 50GB', dataAmount: '50GB', dataAmountMB: 51200, validity: '30 days', validityDays: 30, costPrice: 154.00, retailPrice: 193.00, category: 'monthly', vtuCode: 'TEL-50GB', isPopular: true, sortOrder: 4 }
+      { network: 'TELECEL', name: 'Telecel 5GB', dataAmount: '5GB', dataAmountMB: 5120, validity: 'Non-Expiry', validityDays: 0, costPrice: 22.00, retailPrice: 28.00, category: 'monthly', vtuCode: 'TEL-5GB', isPopular: true, sortOrder: 1 },
+      { network: 'TELECEL', name: 'Telecel 10GB', dataAmount: '10GB', dataAmountMB: 10240, validity: 'Non-Expiry', validityDays: 0, costPrice: 35.00, retailPrice: 44.00, category: 'monthly', vtuCode: 'TEL-10GB', isPopular: true, sortOrder: 2 },
+      { network: 'TELECEL', name: 'Telecel 20GB', dataAmount: '20GB', dataAmountMB: 20480, validity: 'Non-Expiry', validityDays: 0, costPrice: 61.00, retailPrice: 76.00, category: 'monthly', vtuCode: 'TEL-20GB', sortOrder: 3 },
+      { network: 'TELECEL', name: 'Telecel 50GB', dataAmount: '50GB', dataAmountMB: 51200, validity: 'Non-Expiry', validityDays: 0, costPrice: 154.00, retailPrice: 193.00, category: 'monthly', vtuCode: 'TEL-50GB', isPopular: true, sortOrder: 4 }
     ];
 
     // Clear existing bundles (optional)

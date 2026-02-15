@@ -107,6 +107,18 @@ const connectDB = async () => {
     // Start server only after DB connection
     app.listen(PORT, () => {
       console.log(`OPTIMISTIC EMPIRE server running on port ${PORT}`);
+
+      // Self-ping every 14 minutes to prevent Render free tier from sleeping
+      if (process.env.NODE_ENV !== 'development') {
+        const RENDER_URL = process.env.RENDER_EXTERNAL_URL || `https://optimistic-empire-api.onrender.com`;
+        setInterval(() => {
+          require('https').get(`${RENDER_URL}/api/health`, (res) => {
+            console.log(`[Keep-alive] Ping status: ${res.statusCode}`);
+          }).on('error', (err) => {
+            console.log('[Keep-alive] Ping failed:', err.message);
+          });
+        }, 14 * 60 * 1000); // Every 14 minutes
+      }
     });
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
