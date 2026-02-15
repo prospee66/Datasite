@@ -409,23 +409,25 @@ const BuyData = () => {
 
       {/* Payment Options Modal */}
       {showPaymentOptions && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center">
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto animate-slide-up sm:mx-4">
-            <div className="p-6 pb-10">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Choose Payment Method</h3>
-                <button
-                  onClick={() => setShowPaymentOptions(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] flex flex-col animate-slide-up">
+            {/* Modal Header - Fixed */}
+            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+              <h3 className="text-xl font-bold text-gray-900">Choose Payment Method</h3>
+              <button
+                onClick={() => setShowPaymentOptions(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
+            {/* Modal Body - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-5">
               {/* Order Summary */}
-              <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <div className="bg-gray-50 rounded-xl p-4 mb-5">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-gray-600">Bundle</span>
                   <span className="font-semibold">{selectedBundle?.dataAmount} {selectedBundle?.network}</span>
@@ -444,10 +446,10 @@ const BuyData = () => {
               </div>
 
               {/* Payment Methods */}
-              <div className="space-y-3 mb-6">
+              <div className="space-y-3">
                 {/* Wallet */}
                 <label
-                  className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                  className={`flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all ${
                     paymentMethod === 'wallet'
                       ? 'border-primary-500 bg-primary-50'
                       : 'border-gray-200 hover:border-gray-300'
@@ -461,21 +463,21 @@ const BuyData = () => {
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="sr-only"
                   />
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center mr-4 shadow-lg shadow-green-500/30">
-                    <WalletIcon className="h-6 w-6 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center mr-3">
+                    <WalletIcon className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-grow">
-                    <p className="font-semibold text-gray-900">Wallet Balance</p>
-                    <p className="text-sm text-gray-500">GHS {user?.walletBalance?.toFixed(2) || '0.00'}</p>
+                    <p className="font-semibold text-gray-900 text-sm">Wallet Balance</p>
+                    <p className="text-xs text-gray-500">GHS {user?.walletBalance?.toFixed(2) || '0.00'}</p>
                   </div>
                   {paymentMethod === 'wallet' && (
-                    <CheckCircleIcon className="h-6 w-6 text-primary-600" />
+                    <CheckCircleIcon className="h-5 w-5 text-primary-600" />
                   )}
                 </label>
 
                 {/* Card */}
                 <label
-                  className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                  className={`flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all ${
                     paymentMethod === 'card'
                       ? 'border-primary-500 bg-primary-50'
                       : 'border-gray-200 hover:border-gray-300'
@@ -489,21 +491,21 @@ const BuyData = () => {
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="sr-only"
                   />
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-primary-500 rounded-xl flex items-center justify-center mr-4 shadow-lg shadow-blue-500/30">
-                    <CreditCardIcon className="h-6 w-6 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-primary-500 rounded-lg flex items-center justify-center mr-3">
+                    <CreditCardIcon className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-grow">
-                    <p className="font-semibold text-gray-900">Card Payment</p>
-                    <p className="text-sm text-gray-500">Visa, Mastercard</p>
+                    <p className="font-semibold text-gray-900 text-sm">Card Payment</p>
+                    <p className="text-xs text-gray-500">Visa, Mastercard</p>
                   </div>
                   {paymentMethod === 'card' && (
-                    <CheckCircleIcon className="h-6 w-6 text-primary-600" />
+                    <CheckCircleIcon className="h-5 w-5 text-primary-600" />
                   )}
                 </label>
 
                 {/* Mobile Money */}
                 <label
-                  className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                  className={`flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all ${
                     paymentMethod === 'mobile_money'
                       ? 'border-primary-500 bg-primary-50'
                       : 'border-gray-200 hover:border-gray-300'
@@ -517,27 +519,29 @@ const BuyData = () => {
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="sr-only"
                   />
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center mr-4 shadow-lg shadow-yellow-500/30">
-                    <DevicePhoneMobileIcon className="h-6 w-6 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center mr-3">
+                    <DevicePhoneMobileIcon className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-grow">
-                    <p className="font-semibold text-gray-900">Mobile Money</p>
-                    <p className="text-sm text-gray-500">MTN MoMo, Telecel Cash</p>
+                    <p className="font-semibold text-gray-900 text-sm">Mobile Money</p>
+                    <p className="text-xs text-gray-500">MTN MoMo, Telecel Cash</p>
                   </div>
                   {paymentMethod === 'mobile_money' && (
-                    <CheckCircleIcon className="h-6 w-6 text-primary-600" />
+                    <CheckCircleIcon className="h-5 w-5 text-primary-600" />
                   )}
                 </label>
               </div>
 
               {/* Wallet insufficient warning */}
               {paymentMethod === 'wallet' && user?.walletBalance < selectedBundle?.retailPrice && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                   Insufficient balance. You need GHS {(selectedBundle.retailPrice - user.walletBalance).toFixed(2)} more.
                 </div>
               )}
+            </div>
 
-              {/* Pay Button */}
+            {/* Modal Footer - Fixed at bottom */}
+            <div className="p-5 border-t border-gray-100">
               <button
                 onClick={handlePayment}
                 disabled={processing || (paymentMethod === 'wallet' && user?.walletBalance < selectedBundle?.retailPrice)}
