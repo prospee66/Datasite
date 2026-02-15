@@ -86,9 +86,6 @@ const BuyData = () => {
   };
 
   const getPhoneToUse = () => {
-    if (isSelfPurchase) {
-      return recipientPhone || user?.phone || '';
-    }
     return recipientPhone;
   };
 
@@ -351,9 +348,9 @@ const BuyData = () => {
               <input
                 type="tel"
                 inputMode="numeric"
-                value={isSelfPurchase ? (recipientPhone || user?.phone || '') : recipientPhone}
+                value={recipientPhone}
                 onChange={(e) => setRecipientPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
-                placeholder={isSelfPurchase ? 'Enter your number E.g. 0241234567' : 'Enter Receiver\'s number E.g. 0599135523'}
+                placeholder="Enter phone number E.g. 0241234567"
                 className="input pl-12 text-lg"
                 maxLength={10}
               />

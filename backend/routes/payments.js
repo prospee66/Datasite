@@ -207,14 +207,14 @@ router.get('/verify/:reference', protect, async (req, res, next) => {
 // @access  Public (Paystack)
 router.post('/webhook', async (req, res) => {
   try {
-    // Get raw body for signature verification
-    const payload = req.body;
+    // req.body is a raw Buffer from express.raw() middleware
+    const rawBody = req.body;
     const signature = req.headers['x-paystack-signature'];
 
-    // Verify signature
+    // Verify signature using raw body
     const hash = crypto
       .createHmac('sha512', process.env.PAYSTACK_SECRET_KEY)
-      .update(JSON.stringify(payload))
+      .update(rawBody)
       .digest('hex');
 
     if (hash !== signature) {
@@ -222,7 +222,8 @@ router.post('/webhook', async (req, res) => {
       return res.status(401).send('Invalid signature');
     }
 
-    const event = payload;
+    // Parse the raw body as JSON
+    const event = JSON.parse(rawBody);
     console.log('Paystack webhook received:', event.event);
 
     // Handle different events
