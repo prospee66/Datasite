@@ -25,14 +25,28 @@ const BuyData = () => {
 
   useEffect(() => {
     fetchBundles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchBundles = async () => {
+  const fetchBundles = async (retryCount = 0) => {
     try {
+      setLoading(true);
       const response = await bundleAPI.getAll();
-      setBundles(response.data.grouped || {});
+      const grouped = response.data.grouped || {};
+      setBundles(grouped);
+      if (Object.keys(grouped).length === 0 && retryCount < 2) {
+        // Empty response, retry after a short delay (server may be waking up)
+        setTimeout(() => fetchBundles(retryCount + 1), 3000);
+        return;
+      }
     } catch (error) {
-      toast.error('Failed to load data bundles');
+      console.error('Bundle fetch error:', error);
+      if (retryCount < 2) {
+        // Retry on failure (Render free tier cold start can take 30-60s)
+        setTimeout(() => fetchBundles(retryCount + 1), 5000);
+        return;
+      }
+      toast.error('Failed to load data bundles. Please refresh the page.');
     } finally {
       setLoading(false);
     }
@@ -71,13 +85,20 @@ const BuyData = () => {
     }
   };
 
+  const getPhoneToUse = () => {
+    if (isSelfPurchase) {
+      return recipientPhone || user?.phone || '';
+    }
+    return recipientPhone;
+  };
+
   const handlePurchase = () => {
     if (!selectedBundle) {
       toast.error('Please select a data bundle');
       return;
     }
 
-    const phoneToUse = isSelfPurchase ? user?.phone : recipientPhone;
+    const phoneToUse = getPhoneToUse();
 
     if (!phoneToUse || !validatePhone(phoneToUse)) {
       toast.error('Please enter a valid 10-digit phone number');
@@ -94,7 +115,7 @@ const BuyData = () => {
 
   const handlePaystackPayment = async () => {
     setProcessing(true);
-    const phoneToUse = isSelfPurchase ? user?.phone : recipientPhone;
+    const phoneToUse = getPhoneToUse();
 
     try {
       const response = await paymentAPI.initialize({
@@ -119,7 +140,7 @@ const BuyData = () => {
     }
 
     setProcessing(true);
-    const phoneToUse = isSelfPurchase ? user?.phone : recipientPhone;
+    const phoneToUse = getPhoneToUse();
 
     try {
       const response = await walletAPI.purchase({
@@ -157,6 +178,15 @@ const BuyData = () => {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center gap-2 text-primary-600">
+            <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span className="font-medium">Loading data bundles...</span>
+          </div>
+        </div>
         <div className="animate-pulse space-y-6">
           <div className="h-8 bg-gray-200 rounded w-1/2"></div>
           <div className="flex space-x-3">
@@ -230,6 +260,18 @@ const BuyData = () => {
           {/* Data Size Selection */}
           <div>
             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">Data Size</h3>
+            {dataSizes.length === 0 ? (
+              <div className="text-center py-6">
+                <p className="text-gray-500 mb-3">No bundles available for {currentNetwork?.name}</p>
+                <button
+                  onClick={() => fetchBundles(0)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                >
+                  <ArrowPathIcon className="h-4 w-4" />
+                  Retry
+                </button>
+              </div>
+            ) : (
             <div className="flex flex-wrap gap-2 sm:gap-3">
               {dataSizes.map((size) => {
                 // eslint-disable-next-line no-unused-vars
@@ -250,6 +292,7 @@ const BuyData = () => {
                 );
               })}
             </div>
+            )}
           </div>
 
           {/* Selected Bundle Details */}
@@ -303,29 +346,19 @@ const BuyData = () => {
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               {isSelfPurchase ? 'Your Number' : 'Receiver\'s Number'} <span className="text-red-500">*</span>
             </label>
-            {isSelfPurchase ? (
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                <DevicePhoneMobileIcon className="h-5 w-5 text-gray-400" />
-                <span className="font-medium text-gray-900">{user?.phone || 'No phone number set'}</span>
-                <CheckCircleIcon className="h-5 w-5 text-green-500 ml-auto" />
-              </div>
-            ) : (
-              <>
-                <div className="relative">
-                  <DevicePhoneMobileIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={recipientPhone}
-                    onChange={(e) => setRecipientPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
-                    placeholder="Enter Receiver's number here E.g. 0599135523"
-                    className="input pl-12 text-lg"
-                    maxLength={10}
-                  />
-                </div>
-                <p className="text-sm text-gray-500 mt-2">Please provide 10 digits only</p>
-              </>
-            )}
+            <div className="relative">
+              <DevicePhoneMobileIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="tel"
+                inputMode="numeric"
+                value={isSelfPurchase ? (recipientPhone || user?.phone || '') : recipientPhone}
+                onChange={(e) => setRecipientPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
+                placeholder={isSelfPurchase ? 'Enter your number E.g. 0241234567' : 'Enter Receiver\'s number E.g. 0599135523'}
+                className="input pl-12 text-lg"
+                maxLength={10}
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-2">Please provide 10 digits only</p>
           </div>
 
           {/* Purchase Button */}
@@ -399,7 +432,7 @@ const BuyData = () => {
                 </div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-gray-600">Recipient</span>
-                  <span className="font-semibold">{isSelfPurchase ? user?.phone : recipientPhone}</span>
+                  <span className="font-semibold">{getPhoneToUse()}</span>
                 </div>
                 <div className="h-px bg-gray-200 my-3"></div>
                 <div className="flex justify-between items-center">
