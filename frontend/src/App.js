@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 // User Pages
 import Dashboard from './pages/Dashboard';
@@ -91,6 +92,7 @@ function App() {
           }
         />
         <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="reset-password/:token" element={<ResetPassword />} />
         <Route path="payment/callback" element={<PaymentCallback />} />
         <Route path="wallet/callback" element={<PaymentCallback type="wallet" />} />
       </Route>

@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
 const crypto = require('crypto');
+const emailService = require('../services/email');
 
 // @route   POST /api/auth/register
 // @desc    Register a new user
@@ -40,6 +41,9 @@ router.post('/register', async (req, res, next) => {
       password,
       referredBy: referrer?._id
     });
+
+    // Send welcome email (don't await - fire and forget)
+    emailService.sendWelcome(user.email, user.firstName).catch(() => {});
 
     // Generate token
     const token = user.generateAuthToken();
@@ -196,13 +200,12 @@ router.post('/forgot-password', async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    // TODO: Send email with reset link
-    // For now, return the token (in production, send via email)
+    // Send password reset email
+    await emailService.sendPasswordReset(user.email, resetToken);
+
     res.json({
       success: true,
-      message: 'Password reset instructions sent to your email',
-      // Remove in production - only for testing
-      ...(process.env.NODE_ENV === 'development' && { resetToken })
+      message: 'Password reset instructions sent to your email'
     });
   } catch (error) {
     next(error);
