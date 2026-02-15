@@ -228,7 +228,7 @@ const MainLayout = () => {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/233591607363?text=Hi%20OPTIMISTIC%20EMPIRE%2C%20I%20need%20help"
+        href="https://chat.whatsapp.com/G6kmK2MyzcvEmDfSAIhSuD"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-20 md:bottom-6 right-4 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
@@ -268,7 +268,7 @@ const MainLayout = () => {
               <ul className="space-y-2 text-sm">
                 <li>
                   <a
-                    href="https://wa.me/233591607363?text=Hi%20OPTIMISTIC%20EMPIRE%2C%20I%20need%20help"
+                    href="https://chat.whatsapp.com/G6kmK2MyzcvEmDfSAIhSuD"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center space-x-2 hover:text-green-400 transition-colors"
