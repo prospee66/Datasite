@@ -9,7 +9,6 @@ import {
   ArrowLeftIcon,
   Bars3Icon,
   XMarkIcon,
-  ChartBarIcon,
   ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 

@@ -253,9 +253,9 @@ const Register = () => {
               />
               <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
                 I agree to the{' '}
-                <a href="#" className="text-primary-600 hover:underline">Terms of Service</a>
+                <span className="text-primary-600 hover:underline cursor-pointer">Terms of Service</span>
                 {' '}and{' '}
-                <a href="#" className="text-primary-600 hover:underline">Privacy Policy</a>
+                <span className="text-primary-600 hover:underline cursor-pointer">Privacy Policy</span>
               </label>
             </div>
 

@@ -3,12 +3,10 @@ import { useAuth } from '../context/AuthContext';
 import { bundleAPI, paymentAPI, walletAPI } from '../config/api';
 import toast from 'react-hot-toast';
 import {
-  SignalIcon,
   WalletIcon,
   CreditCardIcon,
   DevicePhoneMobileIcon,
   CheckCircleIcon,
-  HeartIcon,
   ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
@@ -234,6 +232,7 @@ const BuyData = () => {
             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">Data Size</h3>
             <div className="flex flex-wrap gap-2 sm:gap-3">
               {dataSizes.map((size) => {
+                // eslint-disable-next-line no-unused-vars
                 const bundle = networkBundles.find(b => b.dataAmount === size);
                 const isSelected = selectedBundle?.dataAmount === size;
                 return (

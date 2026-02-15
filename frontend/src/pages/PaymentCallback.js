@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { paymentAPI } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import {
   CheckCircleIcon,
   XCircleIcon,
-  ClockIcon,
   ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 
 const PaymentCallback = ({ type = 'data' }) => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { refreshUser } = useAuth();
   const [status, setStatus] = useState('verifying'); // verifying, success, failed
   const [message, setMessage] = useState('');
@@ -26,6 +24,7 @@ const PaymentCallback = ({ type = 'data' }) => {
       setStatus('failed');
       setMessage('No payment reference found');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reference]);
 
   const verifyPayment = async () => {

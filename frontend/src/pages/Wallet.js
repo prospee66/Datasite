@@ -22,6 +22,7 @@ const Wallet = () => {
 
   useEffect(() => {
     fetchWalletData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchWalletData = async () => {

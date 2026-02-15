@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { transactionAPI } from '../config/api';
 import {
-  FunnelIcon,
   MagnifyingGlassIcon,
   ArrowPathIcon,
   DocumentArrowDownIcon,
@@ -19,6 +18,7 @@ const Transactions = () => {
 
   useEffect(() => {
     fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, filters.status, filters.network]);
 
   const fetchTransactions = async () => {

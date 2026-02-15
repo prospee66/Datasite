@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { transactionAPI, walletAPI } from '../config/api';
+import { transactionAPI } from '../config/api';
 import {
   WalletIcon,
   ShoppingCartIcon,
-  CheckCircleIcon,
   XCircleIcon,
   ArrowTrendingUpIcon,
   ClockIcon,
@@ -18,6 +17,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async () => {
