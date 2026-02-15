@@ -36,8 +36,7 @@ const transactionSchema = new mongoose.Schema({
     unique: true
   },
   paystackReference: {
-    type: String,
-    sparse: true
+    type: String
   },
   paymentMethod: {
     type: String,

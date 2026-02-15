@@ -84,6 +84,19 @@ class VTUService {
     try {
       let result;
 
+      // Manual mode - admin delivers data manually
+      if (this.provider === 'manual') {
+        console.log(`[VTU] Manual mode - order queued for manual delivery`);
+        return {
+          success: true,
+          data: {
+            status: 'pending_manual_delivery',
+            transactionId: data.transactionRef,
+            message: 'Order received. Data will be delivered shortly.'
+          }
+        };
+      }
+
       switch (this.provider) {
         case 'hubnet':
           result = await this.hubnetPurchase(data);
@@ -225,6 +238,10 @@ class VTUService {
    * Check VTU Wallet Balance
    */
   async checkBalance() {
+    if (this.provider === 'manual') {
+      return { success: true, balance: 0, currency: 'GHS', note: 'Manual delivery mode' };
+    }
+
     try {
       let response;
 
