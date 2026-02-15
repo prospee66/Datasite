@@ -20,6 +20,7 @@ const AdminTransactions = () => {
 
   useEffect(() => {
     fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, filters.status, filters.network]);
 
   const fetchTransactions = async () => {

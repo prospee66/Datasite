@@ -4,8 +4,6 @@ import toast from 'react-hot-toast';
 import {
   MagnifyingGlassIcon,
   UserCircleIcon,
-  CheckCircleIcon,
-  XCircleIcon,
 } from '@heroicons/react/24/outline';
 
 const AdminUsers = () => {
@@ -17,6 +15,7 @@ const AdminUsers = () => {
 
   useEffect(() => {
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, statusFilter]);
 
   const fetchUsers = async () => {

@@ -5,7 +5,6 @@ import {
   PlusIcon,
   PencilIcon,
   TrashIcon,
-  CheckIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 
