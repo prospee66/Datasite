@@ -218,7 +218,7 @@ const MainLayout = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm">
-            <p>&copy; {new Date().getFullYear()} OPTIMISTIC EMPIRE. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} OPTIMISTIC EMPIRE. All rights reserved. <Link to="/login" className="text-gray-600 hover:text-gray-400 transition-colors ml-2">Admin</Link></p>
             <div className="flex items-center space-x-2 mt-2 sm:mt-0">
               <span className="w-3 h-3 bg-mtn rounded-full"></span>
               <span>MTN</span>
