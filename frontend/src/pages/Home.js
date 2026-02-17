@@ -87,17 +87,17 @@ const Home = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center px-4 sm:px-0 animate-slide-up" style={{ animationDelay: '0.2s' }}>
               <Link
-                to="/register"
+                to="/buy-data"
                 className="btn btn-lg bg-white text-primary-700 hover:bg-gray-50 shadow-xl shadow-black/20 hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 group"
               >
-                Get Started Free
+                Buy Data Now
                 <ArrowRightIcon className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
-                to="/buy-data"
+                to="/track-order"
                 className="btn btn-lg bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/20 hover:border-white/50"
               >
-                Buy Data Now
+                Track Order
               </Link>
             </div>
 
@@ -257,15 +257,15 @@ const Home = () => {
             Join thousands of Ghanaians who trust OPTIMISTIC EMPIRE for their data needs. Start saving today!
           </p>
           <Link
-            to="/register"
+            to="/buy-data"
             className="btn btn-lg bg-white text-primary-700 hover:bg-gray-50 shadow-xl shadow-black/20 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group inline-flex"
           >
-            Create Free Account
+            Buy Data Now
             <ArrowRightIcon className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
 
           <p className="mt-6 text-primary-200 text-sm">
-            No credit card required. Start buying data in minutes.
+            No account needed. Buy data instantly.
           </p>
         </div>
       </section>

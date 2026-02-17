@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { paymentAPI } from '../config/api';
-import { useAuth } from '../context/AuthContext';
 import {
   CheckCircleIcon,
   XCircleIcon,
   ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 
-const PaymentCallback = ({ type = 'data' }) => {
+const PaymentCallback = () => {
   const [searchParams] = useSearchParams();
-  const { refreshUser } = useAuth();
-  const [status, setStatus] = useState('verifying'); // verifying, success, failed
+  const [status, setStatus] = useState('verifying');
   const [message, setMessage] = useState('');
   const [data, setData] = useState(null);
 
@@ -29,22 +27,12 @@ const PaymentCallback = ({ type = 'data' }) => {
 
   const verifyPayment = async () => {
     try {
-      let response;
-      if (type === 'wallet') {
-        response = await paymentAPI.verifyWalletTopup(reference);
-      } else {
-        response = await paymentAPI.verify(reference);
-      }
+      const response = await paymentAPI.verifyGuest(reference);
 
       if (response.data.success) {
         setStatus('success');
-        setMessage(
-          type === 'wallet'
-            ? 'Wallet topped up successfully!'
-            : 'Payment successful! Data has been delivered.'
-        );
+        setMessage('Payment successful! Data has been delivered.');
         setData(response.data.data);
-        await refreshUser();
       } else {
         setStatus('failed');
         setMessage(response.data.message || 'Payment verification failed');
@@ -77,7 +65,7 @@ const PaymentCallback = ({ type = 'data' }) => {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h2>
             <p className="text-gray-600 mb-6">{message}</p>
 
-            {data && type !== 'wallet' && (
+            {data && (
               <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left max-w-sm mx-auto">
                 <div className="space-y-2">
                   <div className="flex justify-between">
@@ -94,19 +82,10 @@ const PaymentCallback = ({ type = 'data' }) => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Status</span>
-                    <span className="badge badge-success">{data.deliveryStatus}</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                      {data.deliveryStatus}
+                    </span>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {data && type === 'wallet' && (
-              <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left max-w-sm mx-auto">
-                <div className="text-center">
-                  <p className="text-gray-500 mb-1">New Balance</p>
-                  <p className="text-3xl font-bold text-green-600">
-                    GHS {data.newBalance?.toFixed(2)}
-                  </p>
                 </div>
               </div>
             )}
@@ -115,8 +94,8 @@ const PaymentCallback = ({ type = 'data' }) => {
               <Link to="/buy-data" className="btn btn-primary">
                 Buy More Data
               </Link>
-              <Link to="/transactions" className="btn btn-secondary">
-                View Transactions
+              <Link to="/track-order" className="btn btn-secondary">
+                Track Orders
               </Link>
             </div>
           </div>
@@ -135,8 +114,8 @@ const PaymentCallback = ({ type = 'data' }) => {
               <Link to="/buy-data" className="btn btn-primary">
                 Try Again
               </Link>
-              <Link to="/dashboard" className="btn btn-secondary">
-                Go to Dashboard
+              <Link to="/" className="btn btn-secondary">
+                Go Home
               </Link>
             </div>
           </div>

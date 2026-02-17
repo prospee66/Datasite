@@ -3,6 +3,60 @@ const router = express.Router();
 const Transaction = require('../models/Transaction');
 const { protect } = require('../middleware/auth');
 
+// @route   GET /api/transactions/lookup/phone/:phone
+// @desc    Lookup transactions by phone number (public)
+// @access  Public
+router.get('/lookup/phone/:phone', async (req, res, next) => {
+  try {
+    const phone = req.params.phone.trim();
+
+    const transactions = await Transaction.find({
+      $or: [
+        { recipientPhone: phone },
+        { customerPhone: phone }
+      ]
+    })
+      .select('transactionRef recipientPhone recipientNetwork dataAmount amount status paymentStatus deliveryStatus createdAt deliveredAt')
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    res.json({
+      success: true,
+      data: transactions
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// @route   GET /api/transactions/lookup/reference/:ref
+// @desc    Lookup transaction by reference (public)
+// @access  Public
+router.get('/lookup/reference/:ref', async (req, res, next) => {
+  try {
+    const transaction = await Transaction.findOne({
+      $or: [
+        { transactionRef: req.params.ref },
+        { paystackReference: req.params.ref }
+      ]
+    }).select('transactionRef recipientPhone recipientNetwork dataAmount amount status paymentStatus deliveryStatus createdAt deliveredAt');
+
+    if (!transaction) {
+      return res.status(404).json({
+        success: false,
+        message: 'Transaction not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: transaction
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // @route   GET /api/transactions
 // @desc    Get user's transactions
 // @access  Private

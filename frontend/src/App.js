@@ -9,16 +9,10 @@ import AdminLayout from './layouts/AdminLayout';
 // Public Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-
-// User Pages
-import Dashboard from './pages/Dashboard';
 import BuyData from './pages/BuyData';
-import Transactions from './pages/Transactions';
-import Wallet from './pages/Wallet';
-import Profile from './pages/Profile';
+import TrackOrder from './pages/TrackOrder';
 import PaymentCallback from './pages/PaymentCallback';
 
 // Admin Pages
@@ -27,7 +21,7 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminTransactions from './pages/admin/AdminTransactions';
 import AdminBundles from './pages/admin/AdminBundles';
 
-// Protected Route Component
+// Protected Route Component (admin only)
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
 
@@ -44,26 +38,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   }
 
   if (adminOnly && user.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return children;
-};
-
-// Public Route (redirects to dashboard if logged in)
-const PublicRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -75,42 +50,12 @@ function App() {
       {/* Public Routes */}
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
-        <Route
-          path="login"
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="register"
-          element={
-            <PublicRoute>
-              <Register />
-            </PublicRoute>
-          }
-        />
+        <Route path="buy-data" element={<BuyData />} />
+        <Route path="track-order" element={<TrackOrder />} />
+        <Route path="login" element={<Login />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="reset-password/:token" element={<ResetPassword />} />
         <Route path="payment/callback" element={<PaymentCallback />} />
-        <Route path="wallet/callback" element={<PaymentCallback type="wallet" />} />
-      </Route>
-
-      {/* Protected User Routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <MainLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="buy-data" element={<BuyData />} />
-        <Route path="transactions" element={<Transactions />} />
-        <Route path="wallet" element={<Wallet />} />
-        <Route path="profile" element={<Profile />} />
       </Route>
 
       {/* Admin Routes */}

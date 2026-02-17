@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { bundleAPI, paymentAPI, walletAPI } from '../config/api';
+import { bundleAPI, paymentAPI } from '../config/api';
 import toast from 'react-hot-toast';
 import {
-  WalletIcon,
   CreditCardIcon,
   DevicePhoneMobileIcon,
   CheckCircleIcon,
   ArrowPathIcon,
+  EnvelopeIcon,
 } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 
 const BuyData = () => {
-  const { user, refreshUser } = useAuth();
   const [bundles, setBundles] = useState({ MTN: [], TELECEL: [], AIRTELTIGO: [] });
   const [selectedNetwork, setSelectedNetwork] = useState('MTN');
   const [selectedBundle, setSelectedBundle] = useState(null);
   const [recipientPhone, setRecipientPhone] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
-  const [isSelfPurchase, setIsSelfPurchase] = useState(true);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
 
   useEffect(() => {
@@ -35,14 +32,12 @@ const BuyData = () => {
       const grouped = response.data.grouped || {};
       setBundles(grouped);
       if (Object.keys(grouped).length === 0 && retryCount < 2) {
-        // Empty response, retry after a short delay (server may be waking up)
         setTimeout(() => fetchBundles(retryCount + 1), 3000);
         return;
       }
     } catch (error) {
       console.error('Bundle fetch error:', error);
       if (retryCount < 2) {
-        // Retry on failure (Render free tier cold start can take 30-60s)
         setTimeout(() => fetchBundles(retryCount + 1), 5000);
         return;
       }
@@ -61,10 +56,8 @@ const BuyData = () => {
   const currentNetwork = networks.find(n => n.id === selectedNetwork);
   const networkBundles = bundles[selectedNetwork] || [];
 
-  // Get unique data amounts for the size selector
   const dataSizes = [...new Set(networkBundles.map(b => b.dataAmount))];
 
-  // Get price range
   const prices = networkBundles.map(b => b.retailPrice);
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
@@ -85,39 +78,33 @@ const BuyData = () => {
     }
   };
 
-  const getPhoneToUse = () => {
-    return recipientPhone;
-  };
-
   const handlePurchase = () => {
     if (!selectedBundle) {
       toast.error('Please select a data bundle');
       return;
     }
 
-    const phoneToUse = getPhoneToUse();
-
-    if (!phoneToUse || !validatePhone(phoneToUse)) {
+    if (!recipientPhone || !validatePhone(recipientPhone)) {
       toast.error('Please enter a valid 10-digit phone number');
       return;
     }
 
-    if (!user) {
-      toast.error('Please login to continue');
+    if (!customerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+      toast.error('Please enter a valid email address');
       return;
     }
 
     setShowPaymentOptions(true);
   };
 
-  const handlePaystackPayment = async () => {
+  const handlePayment = async () => {
     setProcessing(true);
-    const phoneToUse = getPhoneToUse();
 
     try {
-      const response = await paymentAPI.initialize({
+      const response = await paymentAPI.initializeGuest({
         bundleId: selectedBundle._id,
-        recipientPhone: phoneToUse.replace(/\s/g, ''),
+        recipientPhone: recipientPhone.replace(/\s/g, ''),
+        customerEmail: customerEmail.trim(),
         paymentMethod,
       });
 
@@ -130,44 +117,10 @@ const BuyData = () => {
     }
   };
 
-  const handleWalletPayment = async () => {
-    if (user.walletBalance < selectedBundle.retailPrice) {
-      toast.error('Insufficient wallet balance');
-      return;
-    }
-
-    setProcessing(true);
-    const phoneToUse = getPhoneToUse();
-
-    try {
-      const response = await walletAPI.purchase({
-        bundleId: selectedBundle._id,
-        recipientPhone: phoneToUse.replace(/\s/g, ''),
-      });
-
-      if (response.data.success) {
-        toast.success('Data delivered successfully!');
-        await refreshUser();
-        resetForm();
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Purchase failed');
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handlePayment = () => {
-    if (paymentMethod === 'wallet') {
-      handleWalletPayment();
-    } else {
-      handlePaystackPayment();
-    }
-  };
-
   const resetForm = () => {
     setSelectedBundle(null);
     setRecipientPhone('');
+    setCustomerEmail('');
     setPaymentMethod('card');
     setShowPaymentOptions(false);
   };
@@ -203,7 +156,7 @@ const BuyData = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 sm:pb-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Buy Data Bundle</h1>
@@ -271,8 +224,6 @@ const BuyData = () => {
             ) : (
             <div className="flex flex-wrap gap-2 sm:gap-3">
               {dataSizes.map((size) => {
-                // eslint-disable-next-line no-unused-vars
-                const bundle = networkBundles.find(b => b.dataAmount === size);
                 const isSelected = selectedBundle?.dataAmount === size;
                 return (
                   <button
@@ -310,38 +261,10 @@ const BuyData = () => {
           {/* Divider */}
           <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
 
-          {/* Purchase Type Toggle */}
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <button
-                onClick={() => setIsSelfPurchase(true)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  isSelfPurchase
-                    ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
-                    : 'bg-gray-100 text-gray-600 border-2 border-transparent'
-                }`}
-              >
-                <HeartSolidIcon className={`h-4 w-4 ${isSelfPurchase ? 'text-primary-600' : 'text-gray-400'}`} />
-                For Myself
-              </button>
-              <button
-                onClick={() => setIsSelfPurchase(false)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  !isSelfPurchase
-                    ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
-                    : 'bg-gray-100 text-gray-600 border-2 border-transparent'
-                }`}
-              >
-                <ArrowPathIcon className={`h-4 w-4 ${!isSelfPurchase ? 'text-primary-600' : 'text-gray-400'}`} />
-                For Someone Else
-              </button>
-            </div>
-          </div>
-
           {/* Phone Number Input */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              {isSelfPurchase ? 'Your Number' : 'Receiver\'s Number'} <span className="text-red-500">*</span>
+              Recipient Phone Number <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <DevicePhoneMobileIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -356,6 +279,24 @@ const BuyData = () => {
               />
             </div>
             <p className="text-sm text-gray-500 mt-2">Please provide 10 digits only</p>
+          </div>
+
+          {/* Email Input */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Your Email <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="email"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+                placeholder="your.email@example.com"
+                className="input pl-12 text-lg"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-2">For payment receipt and order tracking</p>
           </div>
 
           {/* Purchase Button */}
@@ -431,7 +372,11 @@ const BuyData = () => {
                 </div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-gray-600">Recipient</span>
-                  <span className="font-semibold">{getPhoneToUse()}</span>
+                  <span className="font-semibold">{recipientPhone}</span>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600">Email</span>
+                  <span className="font-semibold text-sm">{customerEmail}</span>
                 </div>
                 <div className="h-px bg-gray-200 my-3"></div>
                 <div className="flex justify-between items-center">
@@ -444,34 +389,6 @@ const BuyData = () => {
 
               {/* Payment Methods */}
               <div className="space-y-3">
-                {/* Wallet */}
-                <label
-                  className={`flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all ${
-                    paymentMethod === 'wallet'
-                      ? 'border-primary-500 bg-primary-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="wallet"
-                    checked={paymentMethod === 'wallet'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="sr-only"
-                  />
-                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center mr-3">
-                    <WalletIcon className="h-5 w-5 text-white" />
-                  </div>
-                  <div className="flex-grow">
-                    <p className="font-semibold text-gray-900 text-sm">Wallet Balance</p>
-                    <p className="text-xs text-gray-500">GHS {user?.walletBalance?.toFixed(2) || '0.00'}</p>
-                  </div>
-                  {paymentMethod === 'wallet' && (
-                    <CheckCircleIcon className="h-5 w-5 text-primary-600" />
-                  )}
-                </label>
-
                 {/* Card */}
                 <label
                   className={`flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all ${
@@ -528,20 +445,13 @@ const BuyData = () => {
                   )}
                 </label>
               </div>
-
-              {/* Wallet insufficient warning */}
-              {paymentMethod === 'wallet' && user?.walletBalance < selectedBundle?.retailPrice && (
-                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-                  Insufficient balance. You need GHS {(selectedBundle.retailPrice - user.walletBalance).toFixed(2)} more.
-                </div>
-              )}
             </div>
 
             {/* Modal Footer - Fixed at bottom */}
             <div className="p-5 border-t border-gray-100">
               <button
                 onClick={handlePayment}
-                disabled={processing || (paymentMethod === 'wallet' && user?.walletBalance < selectedBundle?.retailPrice)}
+                disabled={processing}
                 className="w-full btn btn-primary btn-lg"
               >
                 {processing ? (

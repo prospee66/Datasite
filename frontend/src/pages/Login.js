@@ -26,7 +26,7 @@ const Login = () => {
     try {
       const user = await login(formData.email, formData.password);
       toast.success(`Welcome back, ${user.firstName}!`);
-      navigate('/dashboard');
+      navigate('/admin');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
     } finally {
@@ -80,8 +80,8 @@ const Login = () => {
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p className="text-gray-600">Sign in to your account to continue</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Admin Login</h2>
+            <p className="text-gray-600">Sign in to access the admin panel</p>
           </div>
 
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-card border border-white/50">
@@ -163,20 +163,10 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Divider */}
-            <div className="my-6 flex items-center">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-              <span className="px-4 text-sm text-gray-500">or</span>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            </div>
-
-            <div className="text-center">
-              <p className="text-gray-600">
-                Don't have an account?{' '}
-                <Link to="/register" className="text-primary-600 font-semibold hover:text-primary-700 transition-colors">
-                  Create one free
-                </Link>
-              </p>
+            <div className="mt-6 text-center">
+              <Link to="/" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                Back to Home
+              </Link>
             </div>
           </div>
 

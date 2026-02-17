@@ -9,6 +9,213 @@ const paystackService = require('../services/paystack');
 const vtuService = require('../services/vtu');
 const { protect } = require('../middleware/auth');
 
+// @route   POST /api/payments/initialize-guest
+// @desc    Initialize payment for guest data purchase (no login required)
+// @access  Public
+router.post('/initialize-guest', async (req, res, next) => {
+  try {
+    const { bundleId, recipientPhone, customerEmail, paymentMethod } = req.body;
+
+    // Validate input
+    if (!bundleId || !recipientPhone || !customerEmail) {
+      return res.status(400).json({
+        success: false,
+        message: 'Bundle ID, recipient phone, and email are required'
+      });
+    }
+
+    // Validate email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address'
+      });
+    }
+
+    // Get bundle
+    const bundle = await Bundle.findById(bundleId);
+    if (!bundle || !bundle.isActive) {
+      return res.status(404).json({
+        success: false,
+        message: 'Bundle not found or unavailable'
+      });
+    }
+
+    // Detect network from phone
+    const detectedNetwork = vtuService.detectNetwork(recipientPhone);
+    if (detectedNetwork && detectedNetwork !== bundle.network) {
+      return res.status(400).json({
+        success: false,
+        message: `This phone number appears to be ${detectedNetwork}. Please select a ${detectedNetwork} bundle.`
+      });
+    }
+
+    // Generate transaction reference
+    const transactionRef = Transaction.generateRef();
+
+    // Create transaction record (guest - no user)
+    const transaction = await Transaction.create({
+      bundle: bundle._id,
+      recipientPhone,
+      recipientNetwork: bundle.network,
+      amount: bundle.retailPrice,
+      dataAmount: bundle.dataAmount,
+      transactionRef,
+      paymentMethod: paymentMethod || 'card',
+      status: 'pending',
+      paymentStatus: 'pending',
+      deliveryStatus: 'pending',
+      isGuestPurchase: true,
+      customerEmail,
+      customerPhone: recipientPhone
+    });
+
+    // Initialize Paystack payment
+    const paymentResult = await paystackService.initializeTransaction({
+      email: customerEmail,
+      amount: bundle.retailPrice,
+      reference: transactionRef,
+      callbackUrl: `${process.env.FRONTEND_URL}/payment/callback`,
+      channels: paymentMethod === 'mobile_money' ? ['mobile_money'] : ['card', 'mobile_money'],
+      transactionType: 'data_purchase',
+      bundleId: bundle._id.toString(),
+      recipientPhone
+    });
+
+    if (!paymentResult.success) {
+      transaction.status = 'failed';
+      transaction.paymentStatus = 'failed';
+      transaction.errorMessage = paymentResult.message;
+      await transaction.save();
+
+      return res.status(400).json({
+        success: false,
+        message: paymentResult.message
+      });
+    }
+
+    // Update transaction with Paystack reference
+    transaction.paystackReference = paymentResult.data.reference;
+    await transaction.save();
+
+    res.json({
+      success: true,
+      message: 'Payment initialized',
+      data: {
+        authorizationUrl: paymentResult.data.authorization_url,
+        accessCode: paymentResult.data.access_code,
+        reference: paymentResult.data.reference,
+        transactionId: transaction._id
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// @route   GET /api/payments/verify-guest/:reference
+// @desc    Verify guest payment and deliver data
+// @access  Public
+router.get('/verify-guest/:reference', async (req, res, next) => {
+  try {
+    const { reference } = req.params;
+
+    // Find transaction
+    const transaction = await Transaction.findOne({
+      $or: [
+        { transactionRef: reference },
+        { paystackReference: reference }
+      ]
+    }).populate('bundle');
+
+    if (!transaction) {
+      return res.status(404).json({
+        success: false,
+        message: 'Transaction not found'
+      });
+    }
+
+    // Check if already processed
+    if (transaction.paymentStatus === 'success' && transaction.deliveryStatus === 'delivered') {
+      return res.json({
+        success: true,
+        message: 'Transaction already completed',
+        data: {
+          status: transaction.status,
+          paymentStatus: transaction.paymentStatus,
+          deliveryStatus: transaction.deliveryStatus,
+          recipientPhone: transaction.recipientPhone,
+          dataAmount: transaction.dataAmount,
+          network: transaction.recipientNetwork
+        }
+      });
+    }
+
+    // Verify with Paystack
+    const verifyResult = await paystackService.verifyTransaction(reference);
+
+    if (!verifyResult.success) {
+      return res.status(400).json({
+        success: false,
+        message: verifyResult.message
+      });
+    }
+
+    const paymentData = verifyResult.data;
+
+    // Update transaction with payment details
+    transaction.paystackResponse = paymentData;
+    transaction.paymentChannel = paymentData.channel;
+
+    if (paymentData.status === 'success') {
+      transaction.paymentStatus = 'success';
+
+      // Deliver data via VTU
+      const deliveryResult = await vtuService.purchaseData({
+        network: transaction.recipientNetwork,
+        phone: transaction.recipientPhone,
+        vtuCode: transaction.bundle.vtuCode,
+        transactionRef: transaction.transactionRef
+      });
+
+      if (deliveryResult.success) {
+        transaction.status = 'completed';
+        transaction.deliveryStatus = 'delivered';
+        transaction.deliveredAt = new Date();
+        transaction.vtuResponse = deliveryResult.data;
+      } else {
+        transaction.status = 'processing';
+        transaction.deliveryStatus = 'failed';
+        transaction.errorMessage = deliveryResult.message;
+        transaction.vtuResponse = deliveryResult;
+      }
+    } else {
+      transaction.paymentStatus = 'failed';
+      transaction.status = 'failed';
+      transaction.errorMessage = `Payment ${paymentData.status}`;
+    }
+
+    await transaction.save();
+
+    res.json({
+      success: transaction.status === 'completed',
+      message: transaction.status === 'completed'
+        ? 'Data delivered successfully!'
+        : transaction.errorMessage || 'Transaction processing',
+      data: {
+        status: transaction.status,
+        paymentStatus: transaction.paymentStatus,
+        deliveryStatus: transaction.deliveryStatus,
+        recipientPhone: transaction.recipientPhone,
+        dataAmount: transaction.dataAmount,
+        network: transaction.recipientNetwork
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // @route   POST /api/payments/initialize
 // @desc    Initialize payment for data purchase
 // @access  Private

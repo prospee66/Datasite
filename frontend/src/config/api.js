@@ -28,10 +28,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Only redirect to login if on an admin route
+      const isAdminRoute = window.location.pathname.startsWith('/admin');
+      if (isAdminRoute) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
@@ -60,12 +63,16 @@ export const transactionAPI = {
   getStats: () => api.get('/transactions/stats'),
   getById: (id) => api.get(`/transactions/${id}`),
   getByRef: (ref) => api.get(`/transactions/ref/${ref}`),
+  lookupByPhone: (phone) => api.get(`/transactions/lookup/phone/${phone}`),
+  lookupByReference: (ref) => api.get(`/transactions/lookup/reference/${ref}`),
 };
 
 // Payment endpoints
 export const paymentAPI = {
   initialize: (data) => api.post('/payments/initialize', data),
+  initializeGuest: (data) => api.post('/payments/initialize-guest', data),
   verify: (reference) => api.get(`/payments/verify/${reference}`),
+  verifyGuest: (reference) => api.get(`/payments/verify-guest/${reference}`),
   walletTopup: (amount) => api.post('/payments/wallet/topup', { amount }),
   verifyWalletTopup: (reference) => api.get(`/payments/wallet/verify/${reference}`),
 };

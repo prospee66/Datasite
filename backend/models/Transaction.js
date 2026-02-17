@@ -4,7 +4,17 @@ const transactionSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
+  },
+  customerEmail: {
+    type: String
+  },
+  customerPhone: {
+    type: String
+  },
+  isGuestPurchase: {
+    type: Boolean,
+    default: false
   },
   bundle: {
     type: mongoose.Schema.Types.ObjectId,
@@ -87,6 +97,8 @@ transactionSchema.index({ user: 1, createdAt: -1 });
 transactionSchema.index({ paystackReference: 1 }, { sparse: true });
 transactionSchema.index({ status: 1 });
 transactionSchema.index({ createdAt: -1 });
+transactionSchema.index({ recipientPhone: 1 });
+transactionSchema.index({ customerEmail: 1 }, { sparse: true });
 
 // Generate transaction reference
 transactionSchema.statics.generateRef = function() {
